@@ -4,12 +4,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 
+
 # Const Variables
-FILE_NAME = "diabetes.csv"
 N_FEATURES = 64*64*3
-EPOCHS = 100
+EPOCHS = 50
 LEARNING_RATE = 0.001
 VERBOSE = 10
+
 
 class TrainDataset(Dataset):
     def __init__(self):
@@ -28,6 +29,7 @@ class TrainDataset(Dataset):
 
     def __len__(self):
         return self.len
+
 
 class TestDataset(Dataset):
     def __init__(self):
@@ -56,7 +58,7 @@ class Net(torch.nn.Module):
         self.fc3 = torch.nn.Linear(512, 256)
         self.fc4 = torch.nn.Linear(256, 128)
         self.fc5 = torch.nn.Linear(128, 64)
-        self.fc6 = torch.nn.Linear(64, 1)
+          self.fc6 = torch.nn.Linear(64, 1)
 
     def forward(self, X):
         X = torch.relu(self.fc1(X))
@@ -115,24 +117,26 @@ class Net(torch.nn.Module):
                 print(f"Epoch : {epoch} | loss : {round(loss.item(), 5)}")
 
         print(f"Epoch : {EPOCHS} | loss : {round(loss.item(), 5)}") 
+
         
-# Data Loader
-train_data = TrainDataset()
-train_loader = DataLoader(dataset=train_data, batch_size=10, shuffle=True)
+if name == '__main__':
+    # Data Loader
+    train_data = TrainDataset()
+    train_loader = DataLoader(dataset=train_data, batch_size=10, shuffle=True)
 
-test_data = TestDataset()
-test_loader = DataLoader(dataset=test_data, batch_size=10, shuffle=True)
+    test_data = TestDataset()
+    test_loader = DataLoader(dataset=test_data, batch_size=10, shuffle=True)
 
-# Model Instance
-torch.manual_seed(0)
-net = Net(N_FEATURES)
-net.train(train_loader, EPOCHS, LEARNING_RATE, VERBOSE)
+    # Model Instance
+    torch.manual_seed(0)
+    net = Net(N_FEATURES)
+    net.train(train_loader, EPOCHS, LEARNING_RATE, VERBOSE)
 
-train_accuracy = net.calculate_accuracy(train_loader)
-print(f"\nTrain accuracy after {EPOCHS} epochs : {round(train_accuracy, 2)}\n")
+    train_accuracy = net.calculate_accuracy(train_loader)
+    print(f"\nTrain accuracy after {EPOCHS} epochs : {round(train_accuracy, 2)}")
 
-test_accuracy = net.calculate_accuracy(est_loader)
-print(f"\nTest accuracy after {EPOCHS} epochs : {round(test_accuracy, 2)}\n")
+    test_accuracy = net.calculate_accuracy(test_loader)
+    print(f"\nTest accuracy after {EPOCHS} epochs : {round(test_accuracy, 2)}\n")
 
 
 

@@ -58,7 +58,7 @@ class Net(torch.nn.Module):
         self.fc3 = torch.nn.Linear(512, 256)
         self.fc4 = torch.nn.Linear(256, 128)
         self.fc5 = torch.nn.Linear(128, 64)
-          self.fc6 = torch.nn.Linear(64, 1)
+        self.fc6 = torch.nn.Linear(64, 1)
 
     def forward(self, X):
         X = torch.relu(self.fc1(X))
@@ -119,7 +119,7 @@ class Net(torch.nn.Module):
         print(f"Epoch : {EPOCHS} | loss : {round(loss.item(), 5)}") 
 
         
-if name == '__main__':
+if __name__ == '__main__':
     # Data Loader
     train_data = TrainDataset()
     train_loader = DataLoader(dataset=train_data, batch_size=10, shuffle=True)

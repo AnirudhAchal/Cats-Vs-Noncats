@@ -1,4 +1,5 @@
 import torch
+import torchvision.transforms as transforms
 import torch.nn as nn
 import h5py
 import numpy as np
@@ -7,13 +8,13 @@ from torch.utils.data import Dataset, DataLoader
 
 
 # Const Variables
-EPOCHS = 1000
+EPOCHS = 10
 LEARNING_RATE = 0.001
 VERBOSE = 10
 
 
 class TrainDataset(Dataset):
-    def __init__(self):
+    def __init__(self, transform=None):
         # Import Dataset
         train_dataset = h5py.File('../Datasets/TrainCatsVsNoncats.h5', "r")
         
@@ -23,8 +24,12 @@ class TrainDataset(Dataset):
         self.len = train_dataset_X.shape[0]
         self.x_data = torch.from_numpy(train_dataset_X).reshape(-1, 3, 64, 64).float() / 256
         self.y_data = torch.from_numpy(train_dataset_y).reshape(-1, 1).float()
+        self.transform = transform
 
     def __getitem__(self, index):
+        if self.transform:
+            image = self.transform(image)
+
         return self.x_data[index], self.y_data[index]
 
     def __len__(self):
@@ -32,7 +37,7 @@ class TrainDataset(Dataset):
 
 
 class TestDataset(Dataset):
-    def __init__(self):
+    def __init__(self, transform=None):
         # Import Dataset
         test_dataset = h5py.File('../Datasets/TestCatsVsNoncats.h5', "r")
         
@@ -47,6 +52,9 @@ class TestDataset(Dataset):
         return self.x_data[index], self.y_data[index]
 
     def __len__(self):
+        return self.len
+
+    def len(self):
         return self.len
         
 
@@ -81,6 +89,7 @@ class Net(torch.nn.Module):
 
         # Second Fully Connected Layer
         X = self.fc2(X)
+
         X = torch.sigmoid(X)
 
         return X
@@ -135,11 +144,19 @@ class Net(torch.nn.Module):
 
         print(f"Epoch : {EPOCHS} | loss : {round(loss.item(), 5)}") 
 
+my_tranforms = 0
         
 if __name__ == '__main__':
+    # Data Augmentation
+    my_transforms = transforms.Compose([
+        transforms.ToPILImage(),
+        transforms.RandomHorizontalFlip(p=0.5),
+        transforms.ToTensor()
+    ])
+
     # Data Loader
-    train_data = TrainDataset()
-    train_loader = DataLoader(dataset=train_data, batch_size=209, shuffle=True)
+    train_data = TrainDataset(transform=my_tranforms)
+    train_loader = DataLoader(dataset=train_data, batch_size=64, shuffle=True)
 
     test_data = TestDataset()
     test_loader = DataLoader(dataset=test_data, batch_size=50, shuffle=True)

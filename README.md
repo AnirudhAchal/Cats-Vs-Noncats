@@ -1,5 +1,5 @@
 # Cats-Vs-Noncats
-To Obtain the dataset used in the project please follow the following steps :
+To Obtain the dataset used in the project please follow the following steps after cloning this repo:
 1. Run H5toImages.py
 2. Run DataAugmentation.py
 

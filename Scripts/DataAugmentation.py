@@ -8,13 +8,6 @@ from keras.preprocessing.image import ImageDataGenerator
 from matplotlib import pyplot
 
 
-# Constant Variables
-CAT_DIR = "../Datasets/TrainImages/Cats/"
-CAT_COUNT = len(glob.glob(os.path.join(CAT_DIR, '*')))
-
-NONCAT_DIR = "../Datasets/TrainImages/Noncats/"
-NONCAT_COUNT = len(glob.glob(os.path.join(NONCAT_DIR, '*')))
-
 
 # Data Generator
 datagen = ImageDataGenerator(
@@ -25,32 +18,80 @@ datagen = ImageDataGenerator(
 )
 
 
-# Data Augmentation on Cats
-for filename in os.listdir(CAT_DIR):
-    img = load_img(os.path.join(CAT_DIR, filename))
-    data = img_to_array(img)
-    samples = expand_dims(data, 0)
-    iterator = datagen.flow(samples, batch_size=1)
+def train_DA():
+    # Constant Variables
+    TRAIN_CAT_DIR = "../Datasets/TrainImages/Cats/"
+    TRAIN_CAT_COUNT = len(glob.glob(os.path.join(TRAIN_CAT_DIR, '*')))
 
-    for i in range(30):
-        batch = iterator.next()
-        image = batch[0].astype('uint8')
-        img = Image.fromarray(image)
-        img.save(os.path.join(CAT_DIR, str(CAT_COUNT) + '.png'))
-        CAT_COUNT += 1
+    TRAIN_NONCAT_DIR = "../Datasets/TrainImages/Noncats/"
+    TRAIN_NONCAT_COUNT = len(glob.glob(os.path.join(TRAIN_NONCAT_DIR, '*')))
+
+    # Data Augmentation on Train Cats
+    for filename in os.listdir(TRAIN_CAT_DIR):
+        img = load_img(os.path.join(TRAIN_CAT_DIR, filename))
+        data = img_to_array(img)
+        samples = expand_dims(data, 0)
+        iterator = datagen.flow(samples, batch_size=1)
+
+        for i in range(30):
+            batch = iterator.next()
+            image = batch[0].astype('uint8')
+            img = Image.fromarray(image)
+            img.save(os.path.join(TRAIN_CAT_DIR, str(TRAIN_CAT_COUNT) + '.png'))
+            TRAIN_CAT_COUNT += 1
 
 
-# Data Augmentation on Noncats
-for filename in os.listdir(NONCAT_DIR):
-    img = load_img(os.path.join(NONCAT_DIR, filename))
-    data = img_to_array(img)
-    samples = expand_dims(data, 0)
-    iterator = datagen.flow(samples, batch_size=1)
+    # Data Augmentation on Train Noncats
+    for filename in os.listdir(TRAIN_NONCAT_DIR):
+        img = load_img(os.path.join(TRAIN_NONCAT_DIR, filename))
+        data = img_to_array(img)
+        samples = expand_dims(data, 0)
+        iterator = datagen.flow(samples, batch_size=1)
 
-    for i in range(30):
-        batch = iterator.next()
-        image = batch[0].astype('uint8')
-        img = Image.fromarray(image)
-        img.save(os.path.join(NONCAT_DIR, str(NONCAT_COUNT) + '.png'))
-        NONCAT_COUNT += 1
+        for i in range(30):
+            batch = iterator.next()
+            image = batch[0].astype('uint8')
+            img = Image.fromarray(image)
+            img.save(os.path.join(TRAIN_NONCAT_DIR, str(TRAIN_NONCAT_COUNT) + '.png'))
+            TRAIN_NONCAT_COUNT += 1
 
+
+def test_DA():
+    # Constant Variables
+    TEST_CAT_DIR = "../Datasets/TestImages/Cats/"
+    TEST_CAT_COUNT = len(glob.glob(os.path.join(TEST_CAT_DIR, '*')))
+
+    TEST_NONCAT_DIR = "../Datasets/TestImages/Noncats/"
+    TEST_NONCAT_COUNT = len(glob.glob(os.path.join(TEST_NONCAT_DIR, '*')))
+
+    # Data Augmentation on Test Cats
+    for filename in os.listdir(TEST_CAT_DIR):
+        img = load_img(os.path.join(TEST_CAT_DIR, filename))
+        data = img_to_array(img)
+        samples = expand_dims(data, 0)
+        iterator = datagen.flow(samples, batch_size=1)
+
+        for i in range(30):
+            batch = iterator.next()
+            image = batch[0].astype('uint8')
+            img = Image.fromarray(image)
+            img.save(os.path.join(TEST_CAT_DIR, str(TEST_CAT_COUNT) + '.png'))
+            TEST_CAT_COUNT += 1
+
+
+    # Data Augmentation on Test Noncats
+    for filename in os.listdir(TEST_NONCAT_DIR):
+        img = load_img(os.path.join(TEST_NONCAT_DIR, filename))
+        data = img_to_array(img)
+        samples = expand_dims(data, 0)
+        iterator = datagen.flow(samples, batch_size=1)
+
+        for i in range(30):
+            batch = iterator.next()
+            image = batch[0].astype('uint8')
+            img = Image.fromarray(image)
+            img.save(os.path.join(TEST_NONCAT_DIR, str(TEST_NONCAT_COUNT) + '.png'))
+            TEST_NONCAT_COUNT += 1
+
+
+train_DA()

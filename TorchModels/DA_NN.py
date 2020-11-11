@@ -44,9 +44,9 @@ def import_data():
         test_dataset_X.append(img)
         test_dataset_y.append(0)
 
-    train_dataset_X = np.array(train_dataset_X).reshape(-1, 3, 64, 64)
+    train_dataset_X = np.array(train_dataset_X).reshape(-1, 3*64*64)
     train_dataset_y = np.array(train_dataset_y).reshape(-1, 1)
-    test_dataset_X = np.array(test_dataset_X).reshape(-1, 3, 64, 64)
+    test_dataset_X = np.array(test_dataset_X).reshape(-1, 3*64*64)
     test_dataset_y = np.array(test_dataset_y).reshape(-1, 1)
     
     return train_dataset_X, train_dataset_y, test_dataset_X, test_dataset_y
@@ -90,36 +90,21 @@ class TestDataset(Dataset):
 class Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=8)
-        self.conv2 = nn.Conv2d(64, 128, kernel_size=8)
+        self.fc1 = nn.Linear(64*64*3, 64)
+        self.fc2 = nn.Linear(64, 32)
+        self.fc3 = nn.Linear(32, 16)
+        self.fc4 = nn.Linear(16, 8)
+        self.fc5 = nn.Linear(8, 8)
+        self.fc6 = nn.Linear(8, 1)
 
-        self.mp = nn.MaxPool2d(2)
-
-        self.fc1 = nn.Linear(12800, 64)
-        self.fc2 = nn.Linear(64, 1)
 
     def forward(self, X):
-        dataset_size = X.shape[0]
-
-        # First Convolutional Layer
-        X = self.mp(self.conv1(X))
-        X = torch.relu(X)
-
-        # Second Convolutional Layer
-        X = self.mp(self.conv2(X))
-        X = torch.relu(X)
-        
-        # Flattening
-        X = X.view(dataset_size, -1)
-
-        # First Fully Connected Layer
-        X = self.fc1(X)
-        X = torch.relu(X)
-
-        # Second Fully Connected Layer
-        X = self.fc2(X)
-
-        X = torch.sigmoid(X)
+        X = torch.relu(self.fc1(X))
+        X = torch.relu(self.fc2(X))
+        X = torch.relu(self.fc3(X))
+        X = torch.relu(self.fc4(X))
+        X = torch.relu(self.fc5(X))
+        X = torch.sigmoid(self.fc6(X))
 
         return X
 
@@ -145,6 +130,8 @@ class Net(torch.nn.Module):
 
             correct_count += torch.sum(y_pred == y).item()
             total_count += m
+
+        print(f"\nCorrect : {correct_count} | Total Count : {total_count}")
 
         return round(correct_count / total_count * 100, 2)
 

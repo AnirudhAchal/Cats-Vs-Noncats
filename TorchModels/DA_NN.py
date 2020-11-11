@@ -131,8 +131,6 @@ class Net(torch.nn.Module):
             correct_count += torch.sum(y_pred == y).item()
             total_count += m
 
-        print(f"\nCorrect : {correct_count} | Total Count : {total_count}")
-
         return round(correct_count / total_count * 100, 2)
 
     def train(self, data_loader, EPOCHS, learning_rate, verbose):
